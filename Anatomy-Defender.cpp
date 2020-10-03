@@ -1,6 +1,5 @@
 // Anatomy-Defender.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-
 #include <iostream>
 #include <SDL.h>
 #undef main
@@ -9,106 +8,152 @@
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
-SDL_Window* win = NULL;     // window itself
-SDL_Surface* winSurface;    // what will appear in the window
+//Global Everything
+//Window
+SDL_Window* gameWindow = NULL;
+//Renderer
+SDL_Renderer* renderer;
+//Surfaces
+SDL_Surface* tempSurface;
+//Textures
+SDL_Texture* texture1 = NULL;
+SDL_Texture* texture2 = NULL;
+//Rectangles
+SDL_Rect rect1;     //SpaceShip rectangle
+SDL_Rect rect2;    //Background rectangle
 
-// Function prototypes
-bool Init();    // Startup and window creation
-bool LoadMedia();   // Loading surfaces, images, etc.,
-void Close();   // Free all allocated memory when done
+//Function Prototypes
+bool ProgramIsRunning();
+void FillRect(SDL_Rect& rect, int x, int y, int width, int height);
+SDL_Surface* loadImage(const char* path);
+SDL_Texture* loadTexture(SDL_Surface* surface);
+void CloseShop();
 
 int main(int argc, char* args[])
 {
-    // Start SDL + Create window
-    if ( !Init() )
+    //Initialize SDL
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
-        std::cout << "Error Initializing";
+        printf("SDL failed to initialize!\n");
+        SDL_Quit();
+        return 0;
     }
-    else
+    //Create a window
+    gameWindow = SDL_CreateWindow("Use the arrow keys to move the sprite around and ESC to exit.", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    //Create a renderer for the window
+    renderer = SDL_CreateRenderer(gameWindow, -1, 0);
+    //load background
+    tempSurface = loadImage("graphics/Ship.bmp");
+    //create texture
+    texture1 = loadTexture(tempSurface);
+    // Create a rectangle at position 0, 0 for background
+    FillRect(rect2, 0, 0, 800, 600);
+    //Load spaceShip bitmap
+    tempSurface = loadImage("graphics/spaceship.bmp");
+    //Create texture
+    texture2 = loadTexture(tempSurface);
+    // Create a rectangle at position 0, 0 for spaceShip
+    FillRect(rect1, 0, 0, 120, 95);
+    while (ProgramIsRunning())
     {
-        // Flag for the main game loop
-        bool quit = false;
-
-        SDL_Event e;
-
-        //SDL_RenderClear(gRenderer);
-
-        while (!quit)
+        //Get the key press from the keyboard
+        const Uint8* keys = SDL_GetKeyboardState(NULL);
+        //if the escape key was pressed
+        if (keys[SDL_SCANCODE_ESCAPE])
         {
-            while (SDL_PollEvent(&e) != 0)
-            {
-                if (e.type == SDL_QUIT)
-                {
-                    quit = true;
-                }
-                else if (e.type == SDL_KEYDOWN)
-                {
-                    // Do character movement processing here
-                }
-            }
-
-            SDL_UpdateWindowSurface(win);
+            CloseShop();
         }
-    }
-
-    Close();
-
-    return 0;
-}
-
-bool Init()
-{
-    // Flag for error catches
-    bool success = true;
-
-    // Initialize video, look for failures if any immediately
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        // Report error and change our flag
-        std::cout << "Init error: " << SDL_GetError() << std::endl;
-        success = false;
-    }
-    else
-    {
-        // Create the window
-        win = SDL_CreateWindow("Anatomy Defender", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-
-        // If window creation was unsuccessful for any reason
-        if (win == NULL)
+        //if the left arrow was pressed then move to the left
+        if (keys[SDL_SCANCODE_LEFT])
         {
-            // Report & change flag
-            std::cout << "Window creation error: " << SDL_GetError() << std::endl;
-            success = false;
+            rect1.x -= 8;
         }
-        else
+        //if the right arrow was pressed then move to the right
+        if (keys[SDL_SCANCODE_RIGHT])
         {
-            // establish the surface
-            winSurface = SDL_GetWindowSurface(win);
+            rect1.x += 8;
         }
+        //if the up arrow was pressed then move up
+        if (keys[SDL_SCANCODE_UP])
+        {
+            rect1.y -= 8;
+        }
+        //if the down arrow was pressed then move down
+        if (keys[SDL_SCANCODE_DOWN])
+        {
+            rect1.y += 8;
+        }
+
+        //Clear the window
+        SDL_RenderClear(renderer);
+        //Copy the background);
+        SDL_RenderCopy(renderer, texture1, NULL, &rect2);
+        //Copy SpaceShip
+        SDL_RenderCopy(renderer, texture2, NULL, &rect1);
+        //display the game screen with updated position of spaceShip
+        SDL_RenderPresent(renderer);
+        SDL_Delay(10);  //delay a bit
+    }//end game loop
+    printf("You will never be able to make everyone happy.  You are not a Nutella jar.");
+    CloseShop();
+    return 1;  //Because it's C
+}//end main
+
+//Function Section
+SDL_Surface* loadImage(const char* path)
+{
+    //Load image at specified path
+    tempSurface = SDL_LoadBMP(path);
+
+    if (tempSurface == NULL)
+    {
+        printf("Unable to load image at path: %s\n", path);
     }
+    return tempSurface;
+}//end loadImage
 
-    return success;
-}
-
-bool LoadMedia()
+SDL_Texture* loadTexture(SDL_Surface* tempSurface)
 {
-    // Flag for error catches
-    bool success = true;
+    //texture
+    SDL_Texture* newTexture = NULL;
+    //Create texture from surface pixels
+    newTexture = SDL_CreateTextureFromSurface(renderer, tempSurface);
+    if (newTexture == NULL)
+    {
+        printf("Unable to create texture");
+    }
+    //Get rid of the surface
+    SDL_FreeSurface(tempSurface);
+    return newTexture;
+}//end create a texture
 
-    // ..
-    return success;
-}
-
-// For deallocation of memory
-void Close()
+void FillRect(SDL_Rect& rect, int x, int y, int width, int height)
 {
-    // Dealloc surface
-    SDL_FreeSurface(winSurface);
+    //Initialize the rectangle
+    rect.x = x;         //initial x position of upper left corner
+    rect.y = y;         //initial y position of upper left corner
+    rect.w = width;     //width of rectangle
+    rect.h = height;    //height of rectangle
+}//end rectangle initializing
 
-    // Dealloc win + NULL it
-    SDL_DestroyWindow(win);
-    win = NULL;
+void CloseShop()
+{
+    //Destroy all objects
+    SDL_DestroyTexture(texture1);
+    SDL_DestroyTexture(texture2);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(gameWindow);
+    SDL_Quit(); //Quit the program
+}//End Close Shop
 
-    // Quit SDL
-    SDL_Quit();
-}
+bool ProgramIsRunning()
+{
+    SDL_Event event;
+    bool running = true;
+    while (SDL_PollEvent(&event))
+    {
+        if (event.type == SDL_QUIT)
+            running = false;
+    }
+    return running;
+}//end is running
