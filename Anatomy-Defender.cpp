@@ -2,19 +2,78 @@
 //
 
 #include <iostream>
+#include <SDL.h>
+#undef main
+
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
+
+SDL_Window* win = NULL;     // window itself
+SDL_Surface* winSurface;    // what will appear in the window
+
+// Function prototypes
+bool Init();    // Startup and window creation
+bool LoadMedia();   // Loading surfaces, images, etc.,
+void Close();   // Free all allocated memory when done
 
 int main()
 {
     std::cout << "Hello World!\n";
+
+    return 0;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+bool Init()
+{
+    // Flag for error catches
+    bool success = true;
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+    // Initialize video, look for failures if any immediately
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
+        // Report error and change our flag
+        std::cout << "Init error: " << SDL_GetError() << std::endl;
+        success = false;
+    }
+    else
+    {
+        // Create the window
+        win = SDL_CreateWindow("Anatomy Defender", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+
+        // If window creation was unsuccessful for any reason
+        if (win == NULL)
+        {
+            std::cout << "Window creation error: " << SDL_GetError() << std::endl;
+            success = false;
+        }
+        else
+        {
+            winSurface = SDL_GetWindowSurface(win);
+        }
+    }
+
+    return success;
+}
+
+bool LoadMedia()
+{
+    // Flag for error catches
+    bool success = true;
+
+    // ..
+    return success;
+}
+
+// For deallocation of memory
+void Close()
+{
+    // Dealloc surface
+    SDL_FreeSurface(winSurface);
+
+    // Dealloc win + NULL it
+    SDL_DestroyWindow(win);
+    win = NULL;
+
+    // Quit SDL
+    SDL_Quit();
+}
