@@ -11,9 +11,9 @@ const int SCREEN_HEIGHT = 720;
 //Window
 SDL_Window* gameWindow = NULL;
 //Renderer
-SDL_Renderer* renderer;
+SDL_Renderer* renderer = NULL;
 //Surfaces
-SDL_Surface* tempSurface;
+SDL_Surface* tempSurface = NULL;
 //Textures
 SDL_Texture* texture1 = NULL;
 SDL_Texture* texture2 = NULL;
