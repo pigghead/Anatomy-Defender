@@ -3,23 +3,25 @@
 class Tile
 {
 public:
-	//Parameters: x - width, y - height, type - what type of tile is this
-	Tile(int x, int y, int type);
-	// Get the collision box of the tile
-	SDL_Rect GetBox();
-	// Get the type of tile this is
+	// Constructor for defining some tile attributes
+	Tile(int x, int y, int tileType);
+
+	// what helps show the tile
+	void Render();
+
+	// retrieve tile type
 	int GetType();
-	// Put the tile on the screen
-	void Render(SDL_Rect& camera);
-	// check collisions with this tile
-	bool checkCollision(SDL_Rect& a, SDL_Rect& b);
+
+	// Get the collision box
+	SDL_Rect GetBox();
 private:
-	// what type of tile is this
-	int type;
-	// collision box
-	SDL_Rect colBox;
-	// width & height (const)
-	const int TILE_WIDTH = 50;
-	const int TILE_HEIGHT = 50;
+	// Int denoting Tile's type
+	int vType;
+
+	// tile attributes (width, height, tile type)
+	SDL_Rect vBox;
+
+	// default width/ height for tiles
+	//int TILE_WIDTH = 50, TILE_HEIGHT = 50;
 };
 

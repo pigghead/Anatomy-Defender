@@ -2,23 +2,26 @@
 
 Tile::Tile(int x, int y, int tileType)
 {
-	// Set the location of our box
-	colBox.x = x;
-	colBox.y = y;
+	vBox.x = x;
+	vBox.y = y;
 
-	// set the bounds for our box
-	colBox.w = TILE_WIDTH;
-	colBox.h = TILE_HEIGHT;
+	vBox.w = 50;
+	vBox.h = 50;
 
-	// assign the type
-	type = tileType;
-}
+	vType = tileType;
+};
 
-void Tile::Render(SDL_Rect& camera)
+void Tile::Render()
 {
-	// Check for tiles on screen
-	if (checkCollision)
-	{
+	// ..
+};
 
-	}
-}
+int Tile::GetType()
+{
+	return vType;
+};
+
+SDL_Rect Tile::GetBox()
+{
+	return vBox;
+};
