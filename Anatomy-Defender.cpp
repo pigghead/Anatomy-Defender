@@ -10,13 +10,17 @@ const int SCREEN_HEIGHT = 720;
 //Global Everything
 //Window
 SDL_Window* gameWindow = NULL;
-//Renderer
-SDL_Renderer* renderer = NULL;
+
+//Renderer (g stands for global)
+SDL_Renderer* gRenderer = NULL;
+
 //Surfaces
 SDL_Surface* tempSurface = NULL;
+
 //Textures
 SDL_Texture* texture1 = NULL;
 SDL_Texture* texture2 = NULL;
+
 //Rectangles
 SDL_Rect rect1;     //SpaceShip rectangle
 SDL_Rect rect2;    //Background rectangle
@@ -39,20 +43,32 @@ int main(int argc, char* args[])
     }
     //Create a window
     gameWindow = SDL_CreateWindow("Use the arrow keys to move the sprite around and ESC to exit.", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+
     //Create a renderer for the window
-    renderer = SDL_CreateRenderer(gameWindow, -1, 0);
+    gRenderer = SDL_CreateRenderer(gameWindow, -1, 0);
+
+    // set the renderer color
+    SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0);  // produce black
+
     //load background
     tempSurface = loadImage("graphics/Ship.bmp");
+
     //create texture
     texture1 = loadTexture(tempSurface);
+
     // Create a rectangle at position 0, 0 for background
     FillRect(rect2, 0, 0, 800, 600);
+
     //Load spaceShip bitmap
     tempSurface = loadImage("graphics/Ship_Top.bmp");
+
     //Create texture
     texture2 = loadTexture(tempSurface);
+
     // Create a rectangle at position 0, 0 for spaceShip
     FillRect(rect1, 0, 0, 120, 95);
+
+    /* MAIN GAME LOOP */
     while (ProgramIsRunning())
     {
         //Get the key press from the keyboard
@@ -84,17 +100,23 @@ int main(int argc, char* args[])
         }
 
         //Clear the window
-        SDL_RenderClear(renderer);
+        SDL_RenderClear(gRenderer);
+
         //Copy the background);
-        SDL_RenderCopy(renderer, texture1, NULL, &rect2);
+        SDL_RenderCopy(gRenderer, texture1, NULL, &rect2);
+
         //Copy SpaceShip
-        SDL_RenderCopy(renderer, texture2, NULL, &rect1);
+        SDL_RenderCopy(gRenderer, texture2, NULL, &rect1);
+
         //display the game screen with updated position of spaceShip
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(gRenderer);
         SDL_Delay(10);  //delay a bit
+
     }//end game loop
+
     printf("You will never be able to make everyone happy.  You are not a Nutella jar.");
     CloseShop();
+
     return 1;  //Because it's C
 }//end main
 
@@ -116,7 +138,7 @@ SDL_Texture* loadTexture(SDL_Surface* tempSurface)
     //texture
     SDL_Texture* newTexture = NULL;
     //Create texture from surface pixels
-    newTexture = SDL_CreateTextureFromSurface(renderer, tempSurface);
+    newTexture = SDL_CreateTextureFromSurface(gRenderer, tempSurface);
     if (newTexture == NULL)
     {
         printf("Unable to create texture");
@@ -140,7 +162,7 @@ void CloseShop()
     //Destroy all objects
     SDL_DestroyTexture(texture1);
     SDL_DestroyTexture(texture2);
-    SDL_DestroyRenderer(renderer);
+    SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gameWindow);
     SDL_Quit(); //Quit the program
 }//End Close Shop

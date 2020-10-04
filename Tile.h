@@ -3,6 +3,10 @@
 class Tile
 {
 public:
+
+	// Default constructor
+	Tile();
+
 	// Constructor for defining some tile attributes
 	Tile(int x, int y, int tileType);
 
@@ -23,5 +27,15 @@ private:
 
 	// default width/ height for tiles
 	//int TILE_WIDTH = 50, TILE_HEIGHT = 50;
+
+	// For rendering
+	SDL_Rect source, destination;
+
+	SDL_Texture* wall;
+	SDL_Texture* floor;
+	SDL_Texture* door;
+
+	// 2d array to hold all spaces in the map
+	int map[16][12];
 };
 
