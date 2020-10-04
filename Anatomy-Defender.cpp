@@ -1,5 +1,4 @@
 // Anatomy-Defender.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 #include <iostream>
 #include <SDL.h>
 #undef main
@@ -49,7 +48,7 @@ int main(int argc, char* args[])
     // Create a rectangle at position 0, 0 for background
     FillRect(rect2, 0, 0, 800, 600);
     //Load spaceShip bitmap
-    tempSurface = loadImage("graphics/spaceship.bmp");
+    tempSurface = loadImage("graphics/Ship_Top.bmp");
     //Create texture
     texture2 = loadTexture(tempSurface);
     // Create a rectangle at position 0, 0 for spaceShip
